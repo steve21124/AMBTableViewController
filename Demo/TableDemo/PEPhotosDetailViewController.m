@@ -39,6 +39,40 @@
     
     // Setup sections
     __weak typeof(self) weakSelf = self;
+    //testing dynamic array
+    NSMutableArray *dynamicSections = [[NSMutableArray alloc] init];
+    //add top section
+    [dynamicSections addObject:self.topSection];
+    NSArray *arrItems = @[@"obj1",@"obj2",@"obj3",@"obj4"];
+    for (int i = 0; i < [arrItems count]; i++) {
+        NSString*item = [arrItems objectAtIndex:i];
+        
+        [dynamicSections addObject:[AMBTableViewSection
+                                    sectionWithObjects:@[@"author_cell"]
+                                    sectionUpdateBlock:^(AMBTableViewSection * section)
+                                    {
+                                        [section reloadObjectAtIndex:0];
+                                    }
+                                    cellHeightBlock:NULL
+                                    cellIdentifierBlock:^NSString *(id object, NSIndexPath *indexPath)
+                                    {
+                                        //NSLog(@"cellIdentifierBlock : %@",item.createdByName);
+                                        //return item.createdByName;
+                                        return item;  //using this cause error "No cell could be dequeued with the given identifier."
+                                        //return @"author";
+                                    }
+                                    cellConfigurationBlock:^(id object,
+                                                             UITableViewCell * cell,
+                                                             NSIndexPath * indexPath)
+                                    {
+                                        PEPhotosDetailAuthorCell * authorCell = (PEPhotosDetailAuthorCell *)cell;
+                                        authorCell.authorLabel.text = item;
+                                    }]];
+    }
+    self.sections = [dynamicSections copy];
+    
+    
+    /*
     self.sections = @[// A section with hideable cells
                       self.topSection,
                       
@@ -84,6 +118,7 @@
                        cellHeightBlock:^CGFloat(id object, NSIndexPath * indexPath) { return 120.0; }
                        cellIdentifierBlock:NULL
                        cellConfigurationBlock:NULL]];
+     */
     
     [self goToNextPost:self];
 }
